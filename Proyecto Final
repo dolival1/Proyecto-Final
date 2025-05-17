@@ -26,38 +26,35 @@ for i = 1:num_puntos
 end
 area_total = abs(area_total) / 2;
 
-% Calcular los azimuts y rumbos
+% Calcular azimuts y rumbos
 azimuts = zeros(1, num_puntos);
 rumbos = strings(1, num_puntos);
 
-% Calcular los azimuts y rumbos
 for i = 1:num_puntos
     dx = coordenadas_X(i+1) - coordenadas_X(i);
     dy = coordenadas_Y(i+1) - coordenadas_Y(i);
-    
-    % Calcular el azimut 
-    azimut = atan2d(dy, dx); % atan2d: Función para calcular el angulo en grados
+
+    % Azimut desde el norte en sentido horario
+    azimut = atan2d(dx, dy);
     if azimut < 0
         azimut = azimut + 360;
     end
     azimuts(i) = azimut;
-    
-    % Calcular el rumbo
-    angulo = mod(azimut, 360);
-    if angulo >= 0 && angulo < 90
-        cuadrante = 'NE';
-        rumbo = angulo;
-    elseif angulo >= 90 && angulo < 180
-        cuadrante = 'SE';
-        rumbo = 180 - angulo;
-    elseif angulo >= 180 && angulo < 270
-        cuadrante = 'SW';
-        rumbo = angulo - 180;
+
+    % Calcular el rumbo y cuadrante
+    if dx >= 0 && dy >= 0
+        rumbo = atan2d(abs(dx), abs(dy));
+        rumbos(i) = sprintf('N %.2f° E', rumbo);
+    elseif dx >= 0 && dy < 0
+        rumbo = atan2d(abs(dx), abs(dy));
+        rumbos(i) = sprintf('S %.2f° E', rumbo);
+    elseif dx < 0 && dy < 0
+        rumbo = atan2d(abs(dx), abs(dy));
+        rumbos(i) = sprintf('S %.2f° W', rumbo);
     else
-        cuadrante = 'NW';
-        rumbo = 360 - angulo;
+        rumbo = atan2d(abs(dx), abs(dy));
+        rumbos(i) = sprintf('N %.2f° W', rumbo);
     end
-    rumbos(i) = sprintf('%.2f° %s', rumbo, cuadrante);
 end
 
 % Mostrar resultados del primer metodo
@@ -99,7 +96,7 @@ if min(coordenadas_Y) < 0 && max(coordenadas_Y) > 0
     yline(0, '--k', 'LineWidth', 1);
 end
 
-% Mejorar la estetica de los ejes del grafico 
+% Mejorar la estetica de los ejes del grafico
 ax = gca;
 ax.XAxis.Exponent = 0;
 ax.YAxis.Exponent = 0;
